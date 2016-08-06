@@ -49,6 +49,8 @@ data.sample <- c(sample(blogs, length(blogs) * ssize),
                  sample(news, length(news) * ssize),
                  sample(twitter, length(twitter) * ssize))
 
+## take out after debugging
+data.sample <- data.sample[1:500]
 data.sample <- as.matrix(data.sample)
 # best of clean data function to remove non words from corpus
 cleanDoc <- function(x) {
@@ -79,8 +81,9 @@ system.time({
 data.sample <- mclapply(data.sample, cleanDoc, mc.cores = no_cores, mc.preschedule = TRUE)
 })
 
-stopCluster(cl)
 
+saveRDS(data.sample, "clean.data.sample.Rda")
+# data.sample <- readRDS("clean.data.sample.Rda")
 # test run was 717.384 / 60 = 11.9564
 data.sample <- as.character(data.sample)
 # saveRDS(data.sample, file = "data.sample.Rda", compress = TRUE)
@@ -94,13 +97,14 @@ data.sample <- as.character(data.sample)
 rm(list=c(setdiff(ls(), "data.sample")))
 gc(reset = TRUE)
 registerDoParallel(max(1, detectCores() - 1))
-setwd("~/Documents/Final_Shiney")
+setwd("~/Github/final_shiny_code")
 aThird <- round(length(data.sample) * 0.33)
-library(quanteda)
-library(tidyr)
-data.sample <- data.sample[1:5000]
+
+
+print("Starting the foreach loop")
+
 system.time({
-bigrams <- foreach(i=1:3, .packages = c("tidyr", "quanteda"), .combine = rbind) %dopar% {
+bigrams <- foreach(i=1:3, .packages = c("tidyr", "quanteda"), .combine = rbind, .multicombine = TRUE,   .verbose = TRUE) %dopar% {
   if (i == 1) {
     slice1 <- data.sample[1:aThird]
     slice1 <- corpus(slice1)
@@ -151,13 +155,13 @@ bigrams <- foreach(i=1:3, .packages = c("tidyr", "quanteda"), .combine = rbind) 
                 ngrams = 2)
     slice3.df <- data.frame(Bigrams = features(dfm3), Freq = quanteda::colSums(dfm3))
     # slice3.df <- separate(slice3.df, col = Bigrams, into = c("W1", "W2"), sep = "_") 
-  }
+    
+    }
   rbind(slice3.df, slice2.df, slice1.df)  
 }
-
 })
 # processing time from parallel is 3.01 compared to 8.01
-bigrams$Freq <- aggregate(bigrams, by = bigrams$Bigrams, FUN = sum)
+bigrams$Freq <- aggregateb(igrams, by = c(bigrams$Bigrams), FUN = sum)
 bigrams <- separate(bigrams, col = Bigrams, into = c("W1", "W2"), sep = "_") 
 
 saveRDS(bigrams, file = "bigrams.Rda")
@@ -217,6 +221,6 @@ saveRDS(bigrams, file = "bigrams.Rda")
 # trigram.df <- separate(trigram.df, col = Trigrams, into = c("W1", "W2", "W3"), sep = "_") # change spilt for 2 or 3 words depending on your grams
 # 
 # save(trigram.df, file = "trigrams.Rda", compress = TRUE)
-# 
+# stopCluster(cl)
 # rm(list=ls())
 # gc(reset = TRUE)
