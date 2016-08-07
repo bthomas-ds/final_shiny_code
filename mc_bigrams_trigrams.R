@@ -50,7 +50,7 @@ data.sample <- c(sample(blogs, length(blogs) * ssize),
                  sample(twitter, length(twitter) * ssize))
 
 ## take out after debugging
-data.sample <- data.sample[1:500]
+data.sample <- data.sample
 data.sample <- as.matrix(data.sample)
 # best of clean data function to remove non words from corpus
 cleanDoc <- function(x) {
@@ -161,7 +161,8 @@ bigrams <- foreach(i=1:3, .packages = c("tidyr", "quanteda"), .combine = rbind, 
 }
 })
 # processing time from parallel is 3.01 compared to 8.01
-bigrams$Freq <- aggregateb(igrams, by = c(bigrams$Bigrams), FUN = sum)
+bigrams$Freq <- aggregate(x = bigrams$Freq, by = list(bigrams$Bigrams), FUN = sum)
+bigrams$Freq <- tapply(X = bigrams, INDEX = bigrams$Bigrams, FUN = sum)
 bigrams <- separate(bigrams, col = Bigrams, into = c("W1", "W2"), sep = "_") 
 
 saveRDS(bigrams, file = "bigrams.Rda")
