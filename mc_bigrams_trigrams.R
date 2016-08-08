@@ -8,7 +8,8 @@ library(parallel)
 library(Matrix)
 library(tidyr)
 library(doParallel)
-library(foreach)
+# library(foreach)
+
 # This code uses Quanteda to create a document frequency matrix and then calculate the term frequency
 # Quanteda was selected after trying TM. 
 # Data was retrieved from
@@ -48,7 +49,7 @@ ssize <- 0.3
 data.sample <- c(sample(blogs, length(blogs) * ssize),
                  sample(news, length(news) * ssize),
                  sample(twitter, length(twitter) * ssize))
-
+data.sample <- data.sample[1:500]
 ## take out after debugging
 data.sample <- data.sample
 data.sample <- as.matrix(data.sample)
@@ -94,8 +95,9 @@ data.sample <- as.character(data.sample)
 # each loop should stake the begin and end, create the corpus and then do dfm
 # data.sample.corpus <- corpus(data.sample)
 
-rm(list=c(setdiff(ls(), "data.sample")))
-gc(reset = TRUE)
+# rm(list=c(setdiff(ls(), "data.sample")))
+# gc(reset = TRUE)
+
 registerDoParallel(max(1, detectCores() - 1))
 setwd("~/Github/final_shiny_code")
 aThird <- round(length(data.sample) * 0.33)
@@ -104,7 +106,7 @@ aThird <- round(length(data.sample) * 0.33)
 print("Starting the foreach loop")
 
 system.time({
-bigrams <- foreach(i=1:3, .packages = c("tidyr", "quanteda"), .combine = rbind, .multicombine = TRUE,   .verbose = TRUE) %dopar% {
+bigrams <- foreach(i=1:3, .packages = c("quanteda"), .combine = rbind, .multicombine = TRUE) %dopar% {
   if (i == 1) {
     slice1 <- data.sample[1:aThird]
     slice1 <- corpus(slice1)
@@ -162,10 +164,10 @@ bigrams <- foreach(i=1:3, .packages = c("tidyr", "quanteda"), .combine = rbind, 
 })
 # processing time from parallel is 3.01 compared to 8.01
 bigrams$Freq <- aggregate(x = bigrams$Freq, by = list(bigrams$Bigrams), FUN = sum)
-bigrams$Freq <- tapply(X = bigrams, INDEX = bigrams$Bigrams, FUN = sum)
+colnames(bigrams) <- c("Bigrams", "Freq")
 bigrams <- separate(bigrams, col = Bigrams, into = c("W1", "W2"), sep = "_") 
-
 saveRDS(bigrams, file = "bigrams.Rda")
+
 # 
 # system.time({
 # data.sample.corpus <- corpus(data.sample)
