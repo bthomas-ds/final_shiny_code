@@ -4,7 +4,7 @@
 # Goal: Clean data and create a term frequency table
 # 
 library(quanteda)
-library(parallel)
+# library(parallel)
 library(Matrix)
 library(tidyr)
 library(doParallel)

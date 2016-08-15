@@ -1,19 +1,20 @@
 # filter_ngrams.R
-# This script filters down the results by choosing bigrams/trigrams that occur more than 1 time.
+# This script filters down the results by choosing bigrams/trigrams that occur more than 1 time
 
-setwd("~/Github/final_shiny_code")
-trigrams <- readRDS("trigrams.Rda")
+rm(list=ls())
+
+setwd("/home/bthomas/Github/final_shiny_code")
+trigrams <- readRDS("flt_trigrams.Rda")
 trigrams2 <- as.data.frame(trigrams)
-object.size(trigrams2)
-sum(trigrams$Freq == 1) / dim(trigrams)[1]
-trigrams3 <- trigrams[trigrams$Freq > 1 ,]
-object.size(trigrams3)
+trigrams3 <- trigrams2 %>% group_by(W1, W2) %>% top_n(1, Freq)
 saveRDS(trigrams3, "flt_trigrams.Rda")
 
+setwd("/home/bthomas/Github/final_shiny_code")
 bigrams <- readRDS("bigrams.Rda")
 bigrams2 <- as.data.frame(bigrams)
-object.size(bigrams2)
-sum(bigrams$Freq == 1) / dim(bigrams)[1]
-bigrams3 <- bigrams2[bigrams2$Freq > 1, ]
+bigrams3 <- bigrams2 %>% group_by(W1) %>% top_n(1, Freq)
+setkey(bigrams3, W1)
 object.size(bigrams3)
 saveRDS(bigrams3, "flt_bigrams.Rda")
+
+
