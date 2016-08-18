@@ -65,7 +65,7 @@ trigrams2 <- readAndIndex()
 bigrams <- readAndIndex2()
 
 for (x in 1:6) {
-  x <- 5
+  
   t <- newSample.tokenized[[x]]
   if (length(t) > 2) {
     key1 <- t[length(t)-2]
@@ -75,8 +75,8 @@ for (x in 1:6) {
       
       hit <- bigrams[.(key1)]$W2[1]
     }
-    if (is.na(hit)) {
-      hit <- "christmas"
+  if (is.na(hit)) {
+      hit <- bigrams[.(key2), mult = "first"]$w2
       }
     print(t)
     print(cat(key1, key2, "hit: ", gsub("^\\s+|\\s+$", "", hit), sep = " "))
