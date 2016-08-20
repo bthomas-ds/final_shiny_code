@@ -1,15 +1,23 @@
+#
+# This is the server logic of a Shiny web application. You can run the 
+# application by clicking 'Run App' above.
+#
+# Find out more about building applications with Shiny here:
+# 
+#    http://shiny.rstudio.com/
+#
+
+library(shiny)
 library(data.table)
 require(quanteda)
 require(dplyr)
-rm(list=ls())
-setwd("~/Github/final_shiny_code")
 
 readAndIndex <- function(){
-trigrams <- readRDS("flt_trigrams.Rda")
-trigrams2 <- as.data.table(trigrams)
-trigrams2 <- trigrams2[order(W1, W2, -Freq)]
-setkey(trigrams2, W1, W2 )
-
+  trigrams <- readRDS("flt_trigrams.Rda")
+  trigrams2 <- as.data.table(trigrams)
+  trigrams2 <- trigrams2[order(W1, W2, -Freq)]
+  setkey(trigrams2, W1, W2 )
+  
 }
 
 readAndIndex2 <- function(){
@@ -20,13 +28,8 @@ readAndIndex2 <- function(){
   
 }
 
-
-getTwitterSample <-function(){
-  sample(readLines("/home/bthomas/Documents/Milestone_Report/final/en_US/en_US.twitter.txt", encoding = "UTF-8", skipNul = TRUE), 6)
-  
-}
-
 cleanDoc <- function(x) {
+  
   x <- iconv(x, "latin1", "ASCII", sub="")
   x <- tolower(x)  # force to lowercase
   #remove offensive, controveral, profanity words
@@ -51,47 +54,38 @@ cleanDoc <- function(x) {
   x
 }
 
-mySample <- "she was a really good cook" 
-newSample <- cleanDoc(as.matrix(mySample))
-newSample.tokenized <- tokenize(newSample)
-newSample.matrix <- matrix(unlist(newSample.tokenized), byrow = TRUE)
-print(newSample.matrix)
-if (nrow(newSample.matrix) > 2) {
-  key1 <- newSample.matrix[nrow(newSample.matrix)-2]
-  key2 <- newSample.matrix[nrow(newSample.matrix)-1]
-  hit <- trigrams2[.(key1, key2), mult = "first"]$W3
-  print(hit)
-  }
+setwd("~/Github/final_shiny_code")
+trigrams2 <- readAndIndex()
+bigrams <- readAndIndex2()
 
-if (is.na(hit)) { 
+# Define server logic required to draw a histogram
+shinyServer(function(input, output) {
     
-  hit <- bigrams[.(key1)]$W2[1]
-  }
-print(hit)
-  
-
-
-
-
-
-
-for (x in 1:6) {
-  
-  t <- newSample.tokenized[[x]]
-  if (length(t) > 2) {
-    key1 <- t[length(t)-2]
-    key2 <- t[length(t)-1]
-    hit <- trigrams2[.(key1, key2), mult = "first"]$W3
-    if (is.na(hit)) { 
-      
-      hit <- bigrams[.(key1)]$W2[1]
-    }
-  if (is.na(hit)) {
-      hit <- bigrams[.(key2), mult = "first"]$w2
+    output$textoutput<- renderText({ 
+      if ((sapply(gregexpr("\\W+", input$text), length) + 1) > 2) {  
+      newSample <- cleanDoc(input$text)
+      t <- tokenize(newSample )
+      newSample.matrix <- matrix(unlist(t), byrow = TRUE)
+      print(newSample.matrix)
+      if (nrow(newSample.matrix) > 2) {
+        key1 <- newSample.matrix[nrow(newSample.matrix)-2]
+        key2 <- newSample.matrix[nrow(newSample.matrix)-1]
+        hit <- trigrams2[.(key1, key2), mult = "first"]$W3
       }
-    print(t)
-    print(cat(key1, key2, "hit: ", gsub("^\\s+|\\s+$", "", hit), sep = " "))
-    print(" ")
-  }
-}
+      
+      if (is.na(hit)) { 
+        hit <- bigrams[.(key1)]$W2[1]
+      }
+      
+      print(hit)
+      
+      hit} else
+      {"Type more than 2 words please"}
+    
+  })
   
+     
+  
+  
+  
+})
