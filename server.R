@@ -33,7 +33,7 @@ cleanDoc <- function(x) {
   x <- iconv(x, "latin1", "ASCII", sub="")
   x <- tolower(x)  # force to lowercase
   #remove offensive, controveral, profanity words
-  getProfanityFile <- readLines("/home/bthomas/Documents/Milestone_Report/profanity1.txt")
+  getProfanityFile <- readLines("profanity1.txt")
   pattern <- paste0("\\b(?:", paste(getProfanityFile, collapse = "|"), ")\\b ?")
   x <- gsub(pattern, "", x, perl = TRUE)
   words <- stopwords("english")
@@ -54,31 +54,31 @@ cleanDoc <- function(x) {
   x
 }
 
-setwd("~/Github/final_shiny_code")
 trigrams2 <- readAndIndex()
 bigrams <- readAndIndex2()
 
 # Define server logic required to draw a histogram
 shinyServer(function(input, output) {
     
-    output$textoutput<- renderText({ 
+    output$textoutput<- renderText({
+      hit <- "france"
       if ((sapply(gregexpr("\\W+", input$text), length) + 1) > 2) {  
       newSample <- cleanDoc(input$text)
       t <- tokenize(newSample )
       newSample.matrix <- matrix(unlist(t), byrow = TRUE)
-      print(newSample.matrix)
+      
       if (nrow(newSample.matrix) > 2) {
         key1 <- newSample.matrix[nrow(newSample.matrix)-2]
         key2 <- newSample.matrix[nrow(newSample.matrix)-1]
         hit <- trigrams2[.(key1, key2), mult = "first"]$W3
       }
       
-      if (is.na(hit)) { 
+      if (identical("france", hit)) { 
+        print(newSample.matrix[nrow(newSample.matrix)])
+        key1 <- newSample.matrix[nrow(newSample.matrix)-1]
         hit <- bigrams[.(key1)]$W2[1]
       }
-      
-      print(hit)
-      
+      if (is.na(hit)) { hit <- "Fahrvergnügen"}
       hit} else
       {"Type more than 2 words please"}
     

@@ -2,7 +2,7 @@ library(data.table)
 require(quanteda)
 require(dplyr)
 rm(list=ls())
-setwd("~/Github/final_shiny_code")
+
 
 readAndIndex <- function(){
 trigrams <- readRDS("flt_trigrams.Rda")
@@ -20,17 +20,11 @@ readAndIndex2 <- function(){
   
 }
 
-
-getTwitterSample <-function(){
-  sample(readLines("/home/bthomas/Documents/Milestone_Report/final/en_US/en_US.twitter.txt", encoding = "UTF-8", skipNul = TRUE), 6)
-  
-}
-
 cleanDoc <- function(x) {
   x <- iconv(x, "latin1", "ASCII", sub="")
   x <- tolower(x)  # force to lowercase
   #remove offensive, controveral, profanity words
-  getProfanityFile <- readLines("/home/bthomas/Documents/Milestone_Report/profanity1.txt")
+  getProfanityFile <- readLines("./profanity1.txt")
   pattern <- paste0("\\b(?:", paste(getProfanityFile, collapse = "|"), ")\\b ?")
   x <- gsub(pattern, "", x, perl = TRUE)
   words <- stopwords("english")
