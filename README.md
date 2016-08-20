@@ -12,7 +12,25 @@ The goal of this file is to apply all of the text cleanup to the data files by u
 This file keeps the top count for each bigram and trigram. This saves file space by not loading bigrams or trigrams that are not the most frequently occurring ngram.
 
 # search_hit.R
-The logic for search trigrams and then bigrams was experiemnted in this file. A sample Twitter of 6 random lines was tested against the logic.
+The logic for search trigrams and then bigrams was experiemnted in this file. A sample Twitter of 6 random lines was tested against the logic. The 6 random lines cleaned and tokenized hit on an exact match 2 of the 6 lines during the last simulation. Hits were proposed for the other 4 but they were not direct hits.
+
+[1] "niallhoranisperfect" "im"                  "sayin"               "wearing"             "stereo"              "hearts"              "shirt"              
+stereo hearts hit:  shirt
+
+[1] "dolphins"   "add"        "another"    "seam"       "stretching" "tight"      "end"       
+stretching tight hit:  across
+
+ [1] "every"      "charitable" "act"        "stepping"   "stone"      "towards"    "heaven"     "henry"      "ward"       "beecher"   
+henry ward hit:  beecher
+
+[1] "get"      "mad"      "look"     "somebody" "n"        "already"  "looking" 
+n already hit:  hav
+
+[1] "just"     "finished" "fifty"    "shades"   "freed"    "now"      "nothing"  "look"     "forward"  "life"     "lost"     "meaning" 
+life lost hit:  day
+
+ [1] "former"  "spur"    "ian"     "mahinmi" "getting" "playing" "time"    "mavs"    "heat"    "lead"    "rd"      "quarter"
+lead rd hit:  us
 
 # bigrams.R
 File dedeicated to creating the bigrams using Quanteda.
