@@ -74,8 +74,8 @@ shinyServer(function(input, output) {
       }
       
       if (identical("france", hit)) { 
-        print(newSample.matrix[nrow(newSample.matrix)])
-        key1 <- newSample.matrix[nrow(newSample.matrix)-1]
+        
+        key1 <- newSample.matrix[nrow(newSample.matrix)]
         hit <- bigrams[.(key1)]$W2[1]
       }
       if (is.na(hit)) { hit <- "Fahrvergnügen"}

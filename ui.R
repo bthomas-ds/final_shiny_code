@@ -46,6 +46,13 @@ shinyUI(navbarPage("Data Science Capstone",
                                                                           <li>Create a function to predict and return terms that mostly will be the next word</li>
 
                                                                       </ul>
+                                                                      <p> I am including a link to the Github repository below. It took a while to figure out how to get the multicore and parallel functions to work. 
+                                                                          But now that I have it configured, I can repeat parallel processing over and over</p>
+                                                                      <ul>
+                                                                          <li><a href="https://github.com/bthomas-ds/final_shiny_code"> Github repository</a></li>
+                                                                          <li> <a href="http://rpubs.com/bthomas-ds/196807">R Pub</a></li>
+
+                                                                      </ul>
                                                                            <h3>Reference links </h3>
                                                                            <ol>
                                                                            <li><a href="https://english.boises                                                                          tate.edu/johnfry/files/2013/04/bigram-2x2.pdf</a></li>
@@ -62,6 +69,7 @@ shinyUI(navbarPage("Data Science Capstone",
                                                                       <p>Inputting "the music sounded much too" returns "video"</p>
                                                                       <p>Inputting "it was a long road trip" returns "back"</p>
                                                                       <p>Inputting "she was a really good cook" returns "idea"</p>
+                                                                      <p>When there is no hits, the code offeres farfenugen as a word.</p>
 
 
                                                                                                          

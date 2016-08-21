@@ -2,8 +2,8 @@ name: final_shiny_code
 account: retirement-scoring-by-state
 server: shinyapps.io
 appId: 121173
-bundleId: 536843
+bundleId: 537247
 url: https://retirement-scoring-by-state.shinyapps.io/final_shiny_code/
-when: 1471713051.96417
+when: 1471810725.60378
 asMultiple: FALSE
 asStatic: FALSE
